@@ -1,0 +1,28 @@
+pipeline {
+  agent { label 'kaniko' }
+
+  stages {
+    stage('Testar Kaniko') {
+      steps {
+        container('kaniko') {
+          sh 'echo "Executando dentro do Kaniko!"'
+        }
+      }
+    }
+
+    stage('Build da imagem com Kaniko') {
+      steps {
+        container('kaniko') {
+          sh '''
+            /kaniko/executor \
+              --context `pwd` \
+              --dockerfile `pwd`/Dockerfile \
+              --destination=docker.io/wlf42/kaniko-test:latest \
+              --insecure \
+              --skip-tls-verify
+          '''
+        }
+      }
+    }
+  }
+}
